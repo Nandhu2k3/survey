@@ -6,20 +6,19 @@ import {
 } from 'lucide-react';
 
 // A helper function for combining class names conditionally
-const cn = (...classes) => classes.filter(Boolean).join(' ');
+const cn = (...classes: (string | boolean | undefined | null)[]) => classes.filter(Boolean).join(' ');
 
 // --- Main App Component ---
 export default function App() {
   // --- STATE MANAGEMENT ---
   const [prompt, setPrompt] = useState('');
   const [tone, setTone] = useState('Neutral');
-  const [questions, setQuestions] = useState([]);
+  const [questions, setQuestions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [isToneDropdownOpen, setIsToneDropdownOpen] = useState(false);
   const [copySuccess, setCopySuccess] = useState('');
-  const [isPresetLoading, setIsPresetLoading] = useState(null);
-
+  const [isPresetLoading, setIsPresetLoading] = useState<string | null>(null);
   const questionsRef = useRef(null);
   const generatorRef = useRef(null);
   
@@ -63,7 +62,7 @@ export default function App() {
     setIsLoading(false);
   };
 
-  const handleToneSelect = (selectedTone) => {
+  const handleToneSelect = (selectedTone: string) => {
     setTone(selectedTone);
     setIsToneDropdownOpen(false);
   };
@@ -71,8 +70,7 @@ export default function App() {
   /**
    * Fetches a detailed, customizable prompt template from a simulated backend.
    */
-  const getDetailedPromptFromBackend = async (id) => {
-    // Simulate network delay
+  const getDetailedPromptFromBackend = async (id: string) => {    // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 500));
 
     const detailedPrompts = {
@@ -82,16 +80,16 @@ export default function App() {
       customer_sat: 'A customer satisfaction survey for clients who have used our [product/service name] in the last 3 months. The goal is to measure their overall satisfaction, ease of use, and the quality of support they received. Include a question about their likelihood to recommend us.'
     };
 
-    return detailedPrompts[id] || 'Could not find a detailed prompt for this topic.';
+    return detailedPrompts[id as keyof typeof detailedPrompts] || 'Could not find a detailed prompt for this topic.';
   };
   
-  const handlePresetPrompt = async (presetId) => {
-    setIsPresetLoading(presetId);
+  const handlePresetPrompt = async (presetId: string) => {
+        setIsPresetLoading(presetId);
     // This simulates a fetch call to an endpoint like `/api/getPresetPrompt?id=${presetId}`
     const detailedPrompt = await getDetailedPromptFromBackend(presetId);
     setPrompt(detailedPrompt);
     setIsPresetLoading(null);
-    generatorRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const generatorRef = useRef<HTMLDivElement>(null);
   };
 
   /**
@@ -126,9 +124,9 @@ export default function App() {
       <header className="sticky top-0 bg-white/90 backdrop-blur-lg z-20 border-b border-gray-200">
         <div className="container mx-auto px-4 flex justify-between items-center py-4">
           <a href="#" className="flex items-center space-x-2">
-            <img src="/CM_Logo.png" alt="CultureMonkey Logo" className="h-8 md:h-9" />
+            <img src="/CM_Logo.png" alt="CultureMonkey Logo" className="h-8 md:h-9 w-auto" />
           </a>
-          <a href="https://www.culturemonkey.io" target="_blank" rel="noopener noreferrer" className="hidden sm:inline-block text-gray-800 font-semibold px-4 py-2 rounded-lg text-sm border border-gray-300 hover:bg-gray-100 transition-colors">
+          <a href="https://www.culturemonkey.io/request-demo" target="_blank" rel="noopener noreferrer" className="hidden sm:inline-block text-gray-800 font-semibold px-4 py-2 rounded-lg text-sm border border-gray-300 hover:bg-gray-100 transition-colors">
             Request a Demo
           </a>
         </div>
@@ -136,7 +134,7 @@ export default function App() {
 
       <main className="container mx-auto px-4">
         <div className="py-12 md:py-20 text-center">
-          <img src="/CM Logo Square.png" alt="CultureMonkey Logo Square" className="h-16 mx-auto mb-6" />
+          <img src="/CM Logo Square.png" alt="CultureMonkey Logo Square" className="h-16 w-16 mx-auto mb-6" />
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 tracking-tight">
             AI Survey Generator
           </h1>
@@ -155,7 +153,7 @@ export default function App() {
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="e.g., Quarterly employee engagement, new hire onboarding experience..."
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-200 resize-none shadow-sm"
-              rows="5"
+              rows={5}
             />
           </div>
           <div className="mt-6 space-y-2">
@@ -204,7 +202,7 @@ export default function App() {
                     <button 
                       key={p.id} 
                       onClick={() => handlePresetPrompt(p.id)} 
-                      disabled={isPresetLoading}
+                      disabled={!!isPresetLoading}
                       className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 transition-colors disabled:bg-gray-200 disabled:cursor-not-allowed flex items-center"
                     >
                         {isPresetLoading === p.id && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
@@ -245,12 +243,12 @@ export default function App() {
             )}
         </div>
         
-        {/* --- Features Section --- */}
+        {/* --- REVISED: Features Section --- */}
         <section className="py-16 md:py-24 bg-gray-50 mt-24">
             <div className="max-w-5xl mx-auto px-4">
                 <div className="text-center">
-                    <h2 className="text-3xl font-bold text-gray-900">More Than an AI. It's Our Expertise.</h2>
-                    <p className="mt-3 text-lg text-gray-600">Generic AI models guess. Our Engagement Engine knows. We've distilled insights from millions of employee data points from top companies into an AI that understands workplace culture.</p>
+                    <h2 className="text-3xl font-bold text-gray-900">More Than an AI. It&apos;s Our Expertise.</h2>
+                    <p className="mt-3 text-lg text-gray-600">Generic AI models guess. Our Engagement Engine knows. We&apos;ve distilled insights from millions of employee data points from top companies into an AI that understands workplace culture.</p>
                 </div>
                 <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
                     <div className="p-6">
@@ -258,7 +256,7 @@ export default function App() {
                             <Award size={24} />
                         </div>
                         <h3 className="mt-5 text-lg font-semibold">Built on Real-World Data</h3>
-                        <p className="mt-2 text-base text-gray-600">This isn't an experiment. Our generator is powered by anonymized insights from our work with industry leaders. It knows what questions actually drive change.</p>
+                        <p className="mt-2 text-base text-gray-600">This isn&apos;t an experiment. Our generator is powered by anonymized insights from our work with industry leaders. It knows what questions actually drive change.</p>
                     </div>
                     <div className="p-6">
                         <div className="flex items-center justify-center h-12 w-12 rounded-full bg-green-100 text-green-600 mx-auto">
@@ -272,13 +270,13 @@ export default function App() {
                             <Target size={24} />
                         </div>
                         <h3 className="mt-5 text-lg font-semibold">Get Actionable Insights, Faster</h3>
-                        <p className="mt-2 text-base text-gray-600">Skip the guesswork. Get a survey that's ready to deploy and designed to uncover the feedback that truly matters for your team's growth.</p>
+                        <p className="mt-2 text-base text-gray-600">Skip the guesswork. Get a survey that&apos;s ready to deploy and designed to uncover the feedback that truly matters for your team&apos;s growth.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        {/* --- How It Works Section --- */}
+        {/* --- REVISED: How It Works Section --- */}
         <section className="py-16 md:py-24">
             <div className="max-w-4xl mx-auto px-4">
                 <div className="text-center">
@@ -298,7 +296,7 @@ export default function App() {
                     <div className="relative p-6 text-center">
                         <div className="flex items-center justify-center h-16 w-16 rounded-full bg-white border-2 border-green-500 text-green-600 mx-auto font-bold text-2xl shadow-lg">2</div>
                         <h3 className="mt-5 text-lg font-semibold">Harness Our Expertise</h3>
-                        <p className="mt-2 text-base text-gray-600">Click 'Generate' and our Engagement Engine gets to work, crafting questions based on proven best practices.</p>
+                        <p className="mt-2 text-base text-gray-600">Click &apos;Generate&apos; and our Engagement Engine gets to work, crafting questions based on proven best practices.</p>
                     </div>
                     <div className="relative p-6 text-center">
                         <div className="flex items-center justify-center h-16 w-16 rounded-full bg-white border-2 border-green-500 text-green-600 mx-auto font-bold text-2xl shadow-lg">3</div>
