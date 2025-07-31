@@ -20,7 +20,7 @@ export default function App() {
   const [copySuccess, setCopySuccess] = useState('');
   const [isPresetLoading, setIsPresetLoading] = useState<string | null>(null);
   const questionsRef = useRef(null);
-  const generatorRef = useRef(null);
+  const generatorRef = useRef<HTMLDivElement>(null);
   
   const tones = ['Neutral', 'Formal', 'Casual', 'Friendly', 'Professional', 'Empathetic'];
   const presetPrompts = [
@@ -70,7 +70,8 @@ export default function App() {
   /**
    * Fetches a detailed, customizable prompt template from a simulated backend.
    */
-  const getDetailedPromptFromBackend = async (id: string) => {    // Simulate network delay
+  const getDetailedPromptFromBackend = async (id: string) => {
+    // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 500));
 
     const detailedPrompts = {
@@ -84,12 +85,11 @@ export default function App() {
   };
   
   const handlePresetPrompt = async (presetId: string) => {
-        setIsPresetLoading(presetId);
+    setIsPresetLoading(presetId);
     // This simulates a fetch call to an endpoint like `/api/getPresetPrompt?id=${presetId}`
     const detailedPrompt = await getDetailedPromptFromBackend(presetId);
     setPrompt(detailedPrompt);
     setIsPresetLoading(null);
-    const generatorRef = useRef<HTMLDivElement>(null);
   };
 
   /**
@@ -111,7 +111,8 @@ export default function App() {
       document.execCommand('copy');
       setCopySuccess('Questions copied!');
       setTimeout(() => setCopySuccess(''), 2000);
-    } catch (err) {
+    } catch (error) {
+      console.error('Failed to copy:', error);
       setCopySuccess('Failed to copy');
     }
     document.body.removeChild(textArea);
