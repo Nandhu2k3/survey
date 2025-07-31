@@ -20,7 +20,7 @@ export default function App() {
   const [copySuccess, setCopySuccess] = useState('');
   const [isPresetLoading, setIsPresetLoading] = useState<string | null>(null);
   const questionsRef = useRef(null);
-  const generatorRef = useRef<HTMLDivElement>(null);
+  const generatorRef = useRef(null);
   
   const tones = ['Neutral', 'Formal', 'Casual', 'Friendly', 'Professional', 'Empathetic'];
   const presetPrompts = [
@@ -70,8 +70,7 @@ export default function App() {
   /**
    * Fetches a detailed, customizable prompt template from a simulated backend.
    */
-  const getDetailedPromptFromBackend = async (id: string) => {
-    // Simulate network delay
+  const getDetailedPromptFromBackend = async (id: string) => {    // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 500));
 
     const detailedPrompts = {
@@ -85,11 +84,12 @@ export default function App() {
   };
   
   const handlePresetPrompt = async (presetId: string) => {
-    setIsPresetLoading(presetId);
+        setIsPresetLoading(presetId);
     // This simulates a fetch call to an endpoint like `/api/getPresetPrompt?id=${presetId}`
     const detailedPrompt = await getDetailedPromptFromBackend(presetId);
     setPrompt(detailedPrompt);
     setIsPresetLoading(null);
+    const generatorRef = useRef<HTMLDivElement>(null);
   };
 
   /**
@@ -111,8 +111,7 @@ export default function App() {
       document.execCommand('copy');
       setCopySuccess('Questions copied!');
       setTimeout(() => setCopySuccess(''), 2000);
-    } catch (error) {
-      console.error('Failed to copy:', error);
+    } catch (err) {
       setCopySuccess('Failed to copy');
     }
     document.body.removeChild(textArea);
@@ -135,7 +134,7 @@ export default function App() {
 
       <main className="container mx-auto px-4">
         <div className="py-12 md:py-20 text-center">
-          <img src="/CM Logo Square.png" alt="CultureMonkey Logo Square" className="h-16 w-16 mx-auto mb-6" />
+          <img src="/CM Logo Square.png" alt="CultureMonkey Logo Square" className="h-20 w-35 mx-auto mb-6" />
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 tracking-tight">
             AI Survey Generator
           </h1>
